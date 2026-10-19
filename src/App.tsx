@@ -1,6 +1,6 @@
 import React from "react";
 import NowPlaying, { type NowPlayingControl, type NowPlayingTrack } from "@/components/kokonutui/now-playing";
-import { UpNext } from "@/components/up-next";
+import { Playlist } from "@/components/playlist";
 import { fetchYouTubeInfo, parseYouTubeId, useYouTubeMedia, type YouTubeMeta } from "@/lib/youtube";
 import { demoTracks, type YouTubeTrack, youtubeTracks } from "@/tracks";
 
@@ -61,16 +61,28 @@ function YouTubeNowPlaying({ entries }: { entries: (YouTubeTrack & { id: string 
     });
   }, [ids, onMeta]);
 
-  // 넓은 화면: [지금 곡 카드 | 다음 곡 캐러셀] 아래에 유튜브 플레이어
-  // 좁은 화면: 카드 → 다음 곡 → 플레이어 순서로 세로 배치
+  // 넓은 화면: 왼쪽 [지금 곡 카드 / 유튜브 플레이어], 오른쪽에 두 칸 높이를 채우는 재생 목록
+  // 좁은 화면: 카드 → 재생 목록 → 플레이어 순서로 세로 배치
   return (
-    <div className="grid w-full max-w-sm grid-cols-1 items-center justify-items-center gap-6 md:max-w-none md:w-auto md:grid-cols-[24rem_18rem] md:gap-x-10">
+    <div className="grid w-full max-w-sm grid-cols-1 gap-6 md:w-auto md:max-w-none md:grid-cols-[24rem_22rem]">
       {/* 첫 재생은 브라우저 정책상 클릭이 필요하므로 자동 재생은 끔 */}
-      <NowPlaying autoPlay={false} controlRef={controlRef} media={media} onTrackChange={setCurrent} tracks={tracks} />
-      <UpNext current={current} onSelect={(index) => controlRef.current?.playTrack(index)} tracks={tracks} />
+      <NowPlaying
+        autoPlay={false}
+        className="md:col-start-1 md:row-start-1"
+        controlRef={controlRef}
+        media={media}
+        onTrackChange={setCurrent}
+        tracks={tracks}
+      />
+      <Playlist
+        className="md:col-start-2 md:row-span-2 md:row-start-1 md:max-w-none"
+        current={current}
+        onSelect={(index) => controlRef.current?.playTrack(index)}
+        tracks={tracks}
+      />
       {/* 유튜브 약관상 플레이어는 보이게 둔다 (200x200 이상) */}
       <div
-        className="aspect-video w-full max-w-sm overflow-hidden rounded-3xl border border-zinc-200 bg-black md:col-start-1 dark:border-zinc-800 [&_iframe]:block [&_iframe]:size-full"
+        className="aspect-video w-full max-w-sm overflow-hidden rounded-3xl border border-zinc-200 bg-black md:col-start-1 md:row-start-2 dark:border-zinc-800 [&_iframe]:block [&_iframe]:size-full"
         ref={mountRef}
       />
     </div>
