@@ -1,7 +1,6 @@
 # Now Playing
 
 유튜브 링크로 노래를 재생하는 레코드판 모양 음악 카드입니다.
-[kokonutui](https://kokonutui.com)의 Now Playing 컴포넌트(MIT)에 유튜브 재생을 연결했습니다.
 
 ## 곡 바꾸기
 
