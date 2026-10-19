@@ -738,9 +738,17 @@ export interface NowPlayingMedia {
   subscribe(listener: (event: NowPlayingMediaEvent) => void): () => void;
 }
 
+/** 바깥(예: 다음 곡 목록)에서 카드를 조작할 때 쓰는 핸들. */
+export interface NowPlayingControl {
+  /** 지정한 곡으로 바꾸고 바로 재생 */
+  playTrack(index: number): void;
+}
+
 export interface NowPlayingProps {
   /** 실제 소리를 내는 외부 재생기 연결. */
   media?: NowPlayingMedia;
+  /** 바깥에서 곡을 바꿀 때 쓰는 핸들. */
+  controlRef?: React.Ref<NowPlayingControl>;
   tracks?: NowPlayingTrack[];
   /** Index of the track loaded first. */
   defaultTrack?: number;
@@ -769,6 +777,7 @@ export function NowPlaying({
   onTrackChange,
   className,
   media,
+  controlRef,
 }: NowPlayingProps) {
   const mediaRef = React.useRef(media);
   mediaRef.current = media;
@@ -994,6 +1003,23 @@ export function NowPlaying({
       }
     });
   }, [media, loadTrack]);
+
+  // 바깥에서 곡을 골라 바로 재생
+  React.useImperativeHandle(
+    controlRef,
+    () => ({
+      playTrack: (index: number) => {
+        const e = engineRef.current;
+        if (!e) {
+          return;
+        }
+        e.playing = true;
+        setPlaying(true);
+        loadTrack(index);
+      },
+    }),
+    [loadTrack]
+  );
 
   const togglePlay = () => {
     const e = engineRef.current;

@@ -1,5 +1,6 @@
 import React from "react";
-import NowPlaying, { type NowPlayingTrack } from "@/components/kokonutui/now-playing";
+import NowPlaying, { type NowPlayingControl, type NowPlayingTrack } from "@/components/kokonutui/now-playing";
+import { UpNext } from "@/components/up-next";
 import { fetchYouTubeInfo, parseYouTubeId, useYouTubeMedia, type YouTubeMeta } from "@/lib/youtube";
 import { demoTracks, type YouTubeTrack, youtubeTracks } from "@/tracks";
 
@@ -48,6 +49,8 @@ function YouTubeNowPlaying({ entries }: { entries: (YouTubeTrack & { id: string 
     [entries]
   );
   const { media, mountRef } = useYouTubeMedia(ids, onMeta);
+  const controlRef = React.useRef<NowPlayingControl>(null);
+  const [current, setCurrent] = React.useState(0);
 
   // 재생 전에도 모든 곡의 제목·채널을 표시
   React.useEffect(() => {
@@ -58,15 +61,18 @@ function YouTubeNowPlaying({ entries }: { entries: (YouTubeTrack & { id: string 
     });
   }, [ids, onMeta]);
 
+  // 넓은 화면: [지금 곡 카드 | 다음 곡 캐러셀] 아래에 유튜브 플레이어
+  // 좁은 화면: 카드 → 다음 곡 → 플레이어 순서로 세로 배치
   return (
-    <>
+    <div className="grid w-full max-w-sm grid-cols-1 items-center justify-items-center gap-6 md:max-w-none md:w-auto md:grid-cols-[24rem_18rem] md:gap-x-10">
       {/* 첫 재생은 브라우저 정책상 클릭이 필요하므로 자동 재생은 끔 */}
-      <NowPlaying autoPlay={false} media={media} tracks={tracks} />
+      <NowPlaying autoPlay={false} controlRef={controlRef} media={media} onTrackChange={setCurrent} tracks={tracks} />
+      <UpNext current={current} onSelect={(index) => controlRef.current?.playTrack(index)} tracks={tracks} />
       {/* 유튜브 약관상 플레이어는 보이게 둔다 (200x200 이상) */}
       <div
-        className="aspect-video w-full max-w-sm overflow-hidden rounded-3xl border border-zinc-200 bg-black dark:border-zinc-800 [&_iframe]:block [&_iframe]:size-full"
+        className="aspect-video w-full max-w-sm overflow-hidden rounded-3xl border border-zinc-200 bg-black md:col-start-1 dark:border-zinc-800 [&_iframe]:block [&_iframe]:size-full"
         ref={mountRef}
       />
-    </>
+    </div>
   );
 }

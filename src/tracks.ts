@@ -15,6 +15,7 @@ export interface YouTubeTrack {
 // 예) { url: "https://youtu.be/xxxxxxxxxxx", title: "보여 줄 제목" }
 export const youtubeTracks: YouTubeTrack[] = [
   { url: "https://youtu.be/5u4xTa3LR2U?si=N0fJ_xtT--ucePOB", title: "민상아 생일축하해" },
+  { url: "https://youtu.be/Y79ARO4zU_8?si=H9ztEyhXKlauvKur" },
 ];
 
 // 유튜브 곡이 없을 때 보여 주는 데모 곡 (소리 없이 화면만 재생)
