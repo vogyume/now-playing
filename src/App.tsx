@@ -24,6 +24,8 @@ function YouTubeNowPlaying({ entries }: { entries: (YouTubeTrack & { id: string 
       artist: entry.artist ?? "YouTube",
       duration: 0,
       artwork: i % 3,
+      // 앨범 표지: 직접 지정한 이미지, 없으면 유튜브 썸네일(16:9, 검은 띠 없음)
+      cover: entry.cover ?? `https://i.ytimg.com/vi/${entry.id}/mqdefault.jpg`,
     }))
   );
   // 영상에서 가져온 정보로 채우되, 직접 지정한 제목·아티스트가 있으면 그것을 유지

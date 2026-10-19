@@ -7,6 +7,8 @@ export interface YouTubeTrack {
   title?: string;
   /** 직접 지정할 아티스트. 비우면 채널 이름을 자동으로 사용 */
   artist?: string;
+  /** 디스크 라벨(앨범 표지) 이미지 주소. 비우면 유튜브 썸네일을 사용 */
+  cover?: string;
 }
 
 // 유튜브 곡 목록: 여기에 넣은 순서대로 재생합니다. 길이는 영상에서 자동으로 가져옵니다.

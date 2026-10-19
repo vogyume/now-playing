@@ -213,6 +213,8 @@ export interface NowPlayingTrack {
   duration: number;
   /** Which built-in label design is printed on the disc (0, 1 or 2). */
   artwork?: number;
+  /** 디스크 라벨에 원형으로 넣을 앨범 표지 이미지 주소. 있으면 artwork 대신 사용. */
+  cover?: string;
 }
 
 const DEFAULT_TRACKS: NowPlayingTrack[] = [
@@ -623,7 +625,7 @@ function LabelArt({ variant }: { variant: number }) {
 
 const GROOVES = [28, 31, 34, 37, 40, 43, 46];
 
-function Disc({ artwork }: { artwork: number }) {
+function Disc({ artwork, cover }: { artwork: number; cover?: string }) {
   const clipId = React.useId();
   return (
     <svg aria-hidden="true" className="size-full" viewBox="0 0 100 100">
@@ -654,9 +656,22 @@ function Disc({ artwork }: { artwork: number }) {
         <circle cx="50" cy="50" r="24" />
       </clipPath>
       <circle className="fill-zinc-100" cx="50" cy="50" r="24" />
-      <g clipPath={`url(#${clipId})`} transform="translate(26 26) scale(0.48)">
-        <LabelArt variant={artwork} />
-      </g>
+      {cover ? (
+        // 앨범 표지: 가운데를 원형으로 잘라 라벨 자리에 표시
+        <image
+          clipPath={`url(#${clipId})`}
+          height="48"
+          href={cover}
+          preserveAspectRatio="xMidYMid slice"
+          width="48"
+          x="26"
+          y="26"
+        />
+      ) : (
+        <g clipPath={`url(#${clipId})`} transform="translate(26 26) scale(0.48)">
+          <LabelArt variant={artwork} />
+        </g>
+      )}
       <circle
         className="fill-white dark:fill-zinc-900"
         cx="50"
@@ -1217,7 +1232,7 @@ export function NowPlaying({
             ref={discRef}
             title="Spin to scrub"
           >
-            <Disc artwork={track.artwork ?? trackIndex % 3} />
+            <Disc artwork={track.artwork ?? trackIndex % 3} cover={track.cover} />
           </div>
           <Tonearm down={playing} />
         </div>
